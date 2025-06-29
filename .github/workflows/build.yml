@@ -6,6 +6,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -42,7 +45,7 @@ jobs:
               --add-data "background.mp3;." ^
               sprite_switcher.py
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            pyinstaller --onefile --windowed --icon=niko.icns --name nikospeak \
+            pyinstaller --onefile --windowed --name nikospeak \
               --add-data "Niko.webp:." \
               --add-data "Niko_speak.webp:." \
               --add-data "Niko_rare1.png:." \
@@ -77,7 +80,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/nikospeak.exe
-            dist/nikospeak
+            ${{ runner.os == 'Windows' && 'dist/nikospeak.exe' || 'dist/nikospeak' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
