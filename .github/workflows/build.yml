@@ -1,101 +1,83 @@
-name: Build NikoSpeak
+name: Build and Release NikoSpeak
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install pyinstaller pillow pygame
-      - name: Build with PyInstaller
-        run: |
-          pyinstaller --onefile --windowed --icon=niko.ico --name nikospeak ^
-            --add-data "Niko.webp;." ^
-            --add-data "Niko_speak.webp;." ^
-            --add-data "Niko_rare1.png;." ^
-            --add-data "Niko_rare2.png;." ^
-            --add-data "meow1.mp3;." ^
-            --add-data "meow2.mp3;." ^
-            --add-data "meow3.mp3;." ^
-            --add-data "meow4.mp3;." ^
-            --add-data "meow5.mp3;." ^
-            --add-data "rare1.mp3;." ^
-            --add-data "rare2.mp3;." ^
-            --add-data "background.mp3;." ^
-            sprite_switcher.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: nikospeak-win
-          path: dist/nikospeak.exe
 
-  build-macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install dependencies
-        run: pip install pyinstaller pillow pygame
-      - name: Build with PyInstaller
-        run: |
-          pyinstaller --onefile --windowed --icon=niko.icns --name nikospeak \
-            --add-data "Niko.webp:." \
-            --add-data "Niko_speak.webp:." \
-            --add-data "Niko_rare1.png:." \
-            --add-data "Niko_rare2.png:." \
-            --add-data "meow1.mp3:." \
-            --add-data "meow2.mp3:." \
-            --add-data "meow3.mp3:." \
-            --add-data "meow4.mp3:." \
-            --add-data "meow5.mp3:." \
-            --add-data "rare1.mp3:." \
-            --add-data "rare2.mp3:." \
-            --add-data "background.mp3:." \
-            sprite_switcher.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: nikospeak-macos
-          path: dist/nikospeak
 
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
       - name: Install dependencies
         run: pip install pyinstaller pillow pygame
+
       - name: Build with PyInstaller
         run: |
-          pyinstaller --onefile --name nikospeak \
-            --add-data "Niko.webp:." \
-            --add-data "Niko_speak.webp:." \
-            --add-data "Niko_rare1.png:." \
-            --add-data "Niko_rare2.png:." \
-            --add-data "meow1.mp3:." \
-            --add-data "meow2.mp3:." \
-            --add-data "meow3.mp3:." \
-            --add-data "meow4.mp3:." \
-            --add-data "meow5.mp3:." \
-            --add-data "rare1.mp3:." \
-            --add-data "rare2.mp3:." \
-            --add-data "background.mp3:." \
-            sprite_switcher.py
-      - uses: actions/upload-artifact@v4
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            pyinstaller --onefile --windowed --icon=niko.ico --name nikospeak `
+              --add-data "Niko.webp;." `
+              --add-data "Niko_speak.webp;." `
+              --add-data "Niko_rare1.png;." `
+              --add-data "Niko_rare2.png;." `
+              --add-data "meow1.mp3;." `
+              --add-data "meow2.mp3;." `
+              --add-data "meow3.mp3;." `
+              --add-data "meow4.mp3;." `
+              --add-data "meow5.mp3;." `
+              --add-data "rare1.mp3;." `
+              --add-data "rare2.mp3;." `
+              --add-data "background.mp3;." `
+              sprite_switcher.py
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            pyinstaller --onefile --windowed --icon=niko.icns --name nikospeak \
+              --add-data "Niko.webp:." \
+              --add-data "Niko_speak.webp:." \
+              --add-data "Niko_rare1.png:." \
+              --add-data "Niko_rare2.png:." \
+              --add-data "meow1.mp3:." \
+              --add-data "meow2.mp3:." \
+              --add-data "meow3.mp3:." \
+              --add-data "meow4.mp3:." \
+              --add-data "meow5.mp3:." \
+              --add-data "rare1.mp3:." \
+              --add-data "rare2.mp3:." \
+              --add-data "background.mp3:." \
+              sprite_switcher.py
+          else
+            pyinstaller --onefile --name nikospeak \
+              --add-data "Niko.webp:." \
+              --add-data "Niko_speak.webp:." \
+              --add-data "Niko_rare1.png:." \
+              --add-data "Niko_rare2.png:." \
+              --add-data "meow1.mp3:." \
+              --add-data "meow2.mp3:." \
+              --add-data "meow3.mp3:." \
+              --add-data "meow4.mp3:." \
+              --add-data "meow5.mp3:." \
+              --add-data "rare1.mp3:." \
+              --add-data "rare2.mp3:." \
+              --add-data "background.mp3:." \
+              sprite_switcher.py
+          fi
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
         with:
-          name: nikospeak-linux
-          path: dist/nikospeak
+          files: |
+            dist/nikospeak.exe
+            dist/nikospeak
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
