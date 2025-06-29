@@ -18,21 +18,21 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install pyinstaller pillow pygame
-      - run: |
-          pyinstaller --onefile --windowed --icon=niko.ico --name nikospeak ^
-            --add-data "Niko.webp;." ^
-            --add-data "Niko_speak.webp;." ^
-            --add-data "Niko_rare1.png;." ^
-            --add-data "Niko_rare2.png;." ^
-            --add-data "meow1.mp3;." ^
-            --add-data "meow2.mp3;." ^
-            --add-data "meow3.mp3;." ^
-            --add-data "meow4.mp3;." ^
-            --add-data "meow5.mp3;." ^
-            --add-data "rare1.mp3;." ^
-            --add-data "rare2.mp3;." ^
-            --add-data "background.mp3;." ^
-            sprite_switcher.py
+      - run: >
+          pyinstaller --onefile --windowed --icon=niko.ico --name nikospeak
+          --add-data "Niko.webp;."
+          --add-data "Niko_speak.webp;."
+          --add-data "Niko_rare1.png;."
+          --add-data "Niko_rare2.png;."
+          --add-data "meow1.mp3;."
+          --add-data "meow2.mp3;."
+          --add-data "meow3.mp3;."
+          --add-data "meow4.mp3;."
+          --add-data "meow5.mp3;."
+          --add-data "rare1.mp3;."
+          --add-data "rare2.mp3;."
+          --add-data "background.mp3;."
+          sprite_switcher.py
       - uses: softprops/action-gh-release@v2
         with:
           files: dist/nikospeak.exe
