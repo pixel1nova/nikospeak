@@ -12,8 +12,6 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
-    outputs:
-      artifact: nikospeak-win.exe
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -35,11 +33,11 @@ jobs:
           --add-data "rare2.mp3;."
           --add-data "background.mp3;."
           sprite_switcher.py
-      - name: upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: softprops/action-gh-release@v2
         with:
-          name: nikospeak-win
-          path: dist/nikospeak-win.exe
+          files: dist/nikospeak-win.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-macos:
     runs-on: macos-latest
@@ -64,11 +62,11 @@ jobs:
             --add-data "rare2.mp3:." \
             --add-data "background.mp3:." \
             sprite_switcher.py
-      - name: upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: softprops/action-gh-release@v2
         with:
-          name: nikospeak-macos
-          path: dist/nikospeak-macos
+          files: dist/nikospeak-macos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-linux:
     runs-on: ubuntu-latest
@@ -93,36 +91,8 @@ jobs:
             --add-data "rare2.mp3:." \
             --add-data "background.mp3:." \
             sprite_switcher.py
-      - name: upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: softprops/action-gh-release@v2
         with:
-          name: nikospeak-linux
-          path: dist/nikospeak-linux
-
-  release:
-    needs: [build-windows, build-macos, build-linux]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: nikospeak-win
-          path: .
-      - uses: actions/download-artifact@v4
-        with:
-          name: nikospeak-macos
-          path: .
-      - uses: actions/download-artifact@v4
-        with:
-          name: nikospeak-linux
-          path: .
-      - name: create release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            nikospeak-win.exe
-            nikospeak-macos
-            nikospeak-linux
+          files: dist/nikospeak-linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-          
