@@ -1,5 +1,5 @@
 # Nikospeak
-Nikospeak is a vibe-coded (made during a fever dream) fan-made interactive program featuring Niko from *OneShot*.  
+Nikospeak is a fan-made interactive program using Tkinter and Pygame, featuring Niko from *OneShot*.  
 Click the button to play randomized meow sounds, with a small chance of rare appearances and sounds.
 
 Features:
