@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
       - run: pip install pyinstaller pillow pygame
       - run: >
-          pyinstaller --onefile --windowed --icon=niko.ico --name nikospeak
+          pyinstaller --onefile --windowed --icon=niko.ico --name nikospeak-win
           --add-data "Niko.webp;."
           --add-data "Niko_speak.webp;."
           --add-data "Niko_rare1.png;."
@@ -35,7 +35,7 @@ jobs:
           sprite_switcher.py
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/nikospeak.exe
+          files: dist/nikospeak-win.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -48,7 +48,7 @@ jobs:
           python-version: '3.11'
       - run: pip install pyinstaller pillow pygame
       - run: |
-          pyinstaller --onefile --windowed --name nikospeak \
+          pyinstaller --onefile --windowed --name nikospeak-macos \
             --add-data "Niko.webp:." \
             --add-data "Niko_speak.webp:." \
             --add-data "Niko_rare1.png:." \
@@ -64,7 +64,7 @@ jobs:
             sprite_switcher.py
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/nikospeak
+          files: dist/nikospeak-macos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -77,7 +77,7 @@ jobs:
           python-version: '3.11'
       - run: pip install pyinstaller pillow pygame
       - run: |
-          pyinstaller --onefile --name nikospeak \
+          pyinstaller --onefile --name nikospeak-linux \
             --add-data "Niko.webp:." \
             --add-data "Niko_speak.webp:." \
             --add-data "Niko_rare1.png:." \
@@ -93,6 +93,6 @@ jobs:
             sprite_switcher.py
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/nikospeak
+          files: dist/nikospeak-linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
