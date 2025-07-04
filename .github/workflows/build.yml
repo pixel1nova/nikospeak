@@ -1,4 +1,4 @@
-name: Build and Release NikoSpeak
+name: Build and Release
 
 on:
   push:
@@ -14,11 +14,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - run: pip install pyinstaller pillow pygame
-      - run: >
+          python-version: 3.11
+      - name: Install dependencies
+        run: pip install pyinstaller pillow pygame pypresence
+      - name: Build Windows executable
+        run: >
           pyinstaller --onefile --windowed --icon=niko.ico --name nikospeak-win
           --add-data "Niko.webp;."
           --add-data "Niko_speak.webp;."
@@ -33,66 +36,98 @@ jobs:
           --add-data "rare2.mp3;."
           --add-data "background.mp3;."
           sprite_switcher.py
-      - uses: softprops/action-gh-release@v2
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/nikospeak-win.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: nikospeak-win
+          path: dist/nikospeak-win.exe
 
   build-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - run: pip install pyinstaller pillow pygame
-      - run: |
-          pyinstaller --onefile --windowed --name nikospeak-macos \
-            --add-data "Niko.webp:." \
-            --add-data "Niko_speak.webp:." \
-            --add-data "Niko_rare1.png:." \
-            --add-data "Niko_rare2.png:." \
-            --add-data "meow1.mp3:." \
-            --add-data "meow2.mp3:." \
-            --add-data "meow3.mp3:." \
-            --add-data "meow4.mp3:." \
-            --add-data "meow5.mp3:." \
-            --add-data "rare1.mp3:." \
-            --add-data "rare2.mp3:." \
-            --add-data "background.mp3:." \
-            sprite_switcher.py
-      - uses: softprops/action-gh-release@v2
+          python-version: 3.11
+      - name: Install dependencies
+        run: pip install pyinstaller pillow pygame pypresence
+      - name: Build macOS app
+        run: >
+          pyinstaller --onefile --windowed --name nikospeak-macos
+          --add-data "Niko.webp:."
+          --add-data "Niko_speak.webp:."
+          --add-data "Niko_rare1.png:."
+          --add-data "Niko_rare2.png:."
+          --add-data "meow1.mp3:."
+          --add-data "meow2.mp3:."
+          --add-data "meow3.mp3:."
+          --add-data "meow4.mp3:."
+          --add-data "meow5.mp3:."
+          --add-data "rare1.mp3:."
+          --add-data "rare2.mp3:."
+          --add-data "background.mp3:."
+          sprite_switcher.py
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/nikospeak-macos
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: nikospeak-macos
+          path: dist/nikospeak-macos
 
   build-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - run: pip install pyinstaller pillow pygame
-      - run: |
-          pyinstaller --onefile --name nikospeak-linux \
-            --add-data "Niko.webp:." \
-            --add-data "Niko_speak.webp:." \
-            --add-data "Niko_rare1.png:." \
-            --add-data "Niko_rare2.png:." \
-            --add-data "meow1.mp3:." \
-            --add-data "meow2.mp3:." \
-            --add-data "meow3.mp3:." \
-            --add-data "meow4.mp3:." \
-            --add-data "meow5.mp3:." \
-            --add-data "rare1.mp3:." \
-            --add-data "rare2.mp3:." \
-            --add-data "background.mp3:." \
-            sprite_switcher.py
-      - uses: softprops/action-gh-release@v2
+          python-version: 3.11
+      - name: Install dependencies
+        run: pip install pyinstaller pillow pygame pypresence
+      - name: Build Linux app
+        run: >
+          pyinstaller --onefile --name nikospeak-linux
+          --add-data "Niko.webp:."
+          --add-data "Niko_speak.webp:."
+          --add-data "Niko_rare1.png:."
+          --add-data "Niko_rare2.png:."
+          --add-data "meow1.mp3:."
+          --add-data "meow2.mp3:."
+          --add-data "meow3.mp3:."
+          --add-data "meow4.mp3:."
+          --add-data "meow5.mp3:."
+          --add-data "rare1.mp3:."
+          --add-data "rare2.mp3:."
+          --add-data "background.mp3:."
+          sprite_switcher.py
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/nikospeak-linux
+          name: nikospeak-linux
+          path: dist/nikospeak-linux
+
+  release:
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: nikospeak-win
+          path: .
+      - uses: actions/download-artifact@v4
+        with:
+          name: nikospeak-macos
+          path: .
+      - uses: actions/download-artifact@v4
+        with:
+          name: nikospeak-linux
+          path: .
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            nikospeak-win.exe
+            nikospeak-macos
+            nikospeak-linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
