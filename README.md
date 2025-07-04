@@ -4,12 +4,13 @@ Click the button to play randomized meow sounds, with a small chance of rare app
 
 Features:
 
-Niko OneShot!
-Clicker!
-Background music! (the cat from ipanema - j1gggs)
-5 WHOLE different meows! (Niko is NOT a cat, tho.)
-2 RARE sounds with a 1/50 chance of appearing...
-oh yeah, and a volume slider for the music.
+- Niko OneShot!
+- Clicker!
+- Background music! (the cat from ipanema - j1gggs)
+- 5 WHOLE different meows! (Niko is NOT a cat, tho.)
+- 2 RARE sounds with a 1/50 chance of appearing...
+- (v1.1.2) Discord Rich Presence
+- oh yeah, and a volume slider for the music.
 
 
 
